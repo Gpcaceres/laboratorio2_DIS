@@ -10,6 +10,22 @@ const getAllAuthors = async (req, res) => {
     }
 }
 
+const searchAuthors = async (req, res) => {
+    try {
+        const { name } = req.query;
+
+        if (!name?.trim()) {
+            return res.status(400).json({ error: 'Query parameter name is required' });
+        }
+
+        const authors = await author.searchAuthorsByName(name);
+        res.json(authors);
+    } catch (error) {
+        console.error('Error searching authors:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+}
+
 const createAuthor = async (req, res) => {
     try {
         const newAuthor = await author.createAuthor(req.body);
@@ -42,6 +58,7 @@ const deleteAuthor = async (req, res) => {
 
 module.exports = {
     getAllAuthors,
+    searchAuthors,
     createAuthor,
     updateAuthor,
     deleteAuthor

@@ -27,6 +27,7 @@ CREATE TABLE IF NOT EXISTS libros (
 );
 
 DROP PROCEDURE IF EXISTS sp_get_authors;
+DROP PROCEDURE IF EXISTS sp_search_authors_by_name;
 DROP PROCEDURE IF EXISTS sp_create_author;
 DROP PROCEDURE IF EXISTS sp_update_author;
 DROP PROCEDURE IF EXISTS sp_delete_author;
@@ -48,6 +49,25 @@ BEGIN
          correo_electronico
   FROM autor
   ORDER BY id;
+END $$
+
+CREATE PROCEDURE sp_search_authors_by_name(IN p_name VARCHAR(100))
+BEGIN
+  SELECT id,
+         nombre,
+         apellidos,
+         fecha_nacimiento,
+         nacionalidad,
+         correo_electronico
+  FROM autor
+  WHERE nombre COLLATE utf8mb4_0900_ai_ci LIKE CONCAT('%', p_name, '%')
+  ORDER BY
+    CASE
+      WHEN nombre COLLATE utf8mb4_0900_ai_ci = p_name THEN 0
+      WHEN nombre COLLATE utf8mb4_0900_ai_ci LIKE CONCAT(p_name, '%') THEN 1
+      ELSE 2
+    END,
+    nombre;
 END $$
 
 CREATE PROCEDURE sp_create_author(

@@ -12,6 +12,7 @@ app.get('/', (req, res) => {
 		message: 'API laboratorio2_DIS activa',
 		uris: {
 			getAuthors: 'GET /api/authors',
+			searchAuthors: 'GET /api/authors/search?name=ge',
 			createAuthor: 'POST /api/authors',
 			updateAuthor: 'PUT /api/authors/:id',
 			deleteAuthor: 'DELETE /api/authors/:id',
@@ -24,6 +25,7 @@ app.get('/', (req, res) => {
 });
 
 app.get('/api/authors', authorController.getAllAuthors);
+app.get('/api/authors/search', authorController.searchAuthors);
 app.post('/api/authors', authorController.createAuthor);
 app.put('/api/authors/:id', authorController.updateAuthor);
 app.delete('/api/authors/:id', authorController.deleteAuthor);

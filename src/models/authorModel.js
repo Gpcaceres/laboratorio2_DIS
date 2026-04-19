@@ -8,6 +8,16 @@ const Autor = {
         return firstResultSet(rows);
     },
 
+    searchAuthorsByName: async (name) => {
+        const searchName = (name || '').trim();
+        if (!searchName) {
+            return [];
+        }
+
+        const [rows] = await db.query('CALL sp_search_authors_by_name(?)', [searchName]);
+        return firstResultSet(rows);
+    },
+
     createAuthor: async (payload) => {
         const { nombres, apellidos, fecha_nacimiento, nacionalidad, correo_electronico } = payload;
         const [rows] = await db.query(

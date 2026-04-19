@@ -4,6 +4,9 @@ GET http://localhost:3000/
 ### Obtener autores
 GET http://localhost:3000/api/authors
 
+### Buscar autores por nombre
+GET http://localhost:3000/api/authors/search?name=ge
+
 ### Crear autor
 POST http://localhost:3000/api/authors
 Content-Type: application/json
