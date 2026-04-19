@@ -61,13 +61,15 @@ BEGIN
          correo_electronico
   FROM autor
   WHERE nombre COLLATE utf8mb4_0900_ai_ci LIKE CONCAT('%', p_name, '%')
+     OR apellidos COLLATE utf8mb4_0900_ai_ci LIKE CONCAT('%', p_name, '%')
   ORDER BY
     CASE
-      WHEN nombre COLLATE utf8mb4_0900_ai_ci = p_name THEN 0
-      WHEN nombre COLLATE utf8mb4_0900_ai_ci LIKE CONCAT(p_name, '%') THEN 1
+      WHEN nombre COLLATE utf8mb4_0900_ai_ci = p_name OR apellidos COLLATE utf8mb4_0900_ai_ci = p_name THEN 0
+      WHEN nombre COLLATE utf8mb4_0900_ai_ci LIKE CONCAT(p_name, '%') OR apellidos COLLATE utf8mb4_0900_ai_ci LIKE CONCAT(p_name, '%') THEN 1
       ELSE 2
     END,
-    nombre;
+    nombre,
+    apellidos;
 END $$
 
 CREATE PROCEDURE sp_create_author(

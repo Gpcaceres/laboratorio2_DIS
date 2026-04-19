@@ -5,7 +5,10 @@ GET http://localhost:3000/
 GET http://localhost:3000/api/authors
 
 ### Buscar autores por nombre
-GET http://localhost:3000/api/authors/search?name=ge
+GET http://localhost:3000/api/authors/search?name=ger
+
+### Buscar autores por apellido
+GET http://localhost:3000/api/authors/search?name=García
 
 ### Crear autor
 POST http://localhost:3000/api/authors
