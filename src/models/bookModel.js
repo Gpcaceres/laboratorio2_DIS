@@ -1,20 +1,39 @@
 const db = require('../config/db');
 
+const firstResultSet = (rows) => (Array.isArray(rows[0]) ? rows[0] : rows);
+
 const Book = {
-        getAllBooks: async () => {
-            const [rows] = await db.query(`SELECT 1.*,
-            a.nombre as autor_nombre,
-            a.apellidos as autor_apellidos,
-            FROM libros 1
-            JOIN autor a 
-            ON 1.autor_id = a.id'
-            ORDEN BY 1.id`,
-            );
-            return rows;
-        }
-    };
+    getAllBooks: async () => {
+        const [rows] = await db.query('CALL sp_get_books()');
+        return firstResultSet(rows);
+    },
 
-    module.exports = Book;
+    createBook: async (payload) => {
+        const { titulo, autor_id, anio_publicacion, isbn } = payload;
+        const [rows] = await db.query(
+            'CALL sp_create_book(?, ?, ?, ?)',
+            [titulo, autor_id, anio_publicacion ?? null, isbn ?? null]
+        );
+        const created = firstResultSet(rows)[0];
+        return created || null;
+    },
+
+    updateBook: async (id, payload) => {
+        const { titulo, autor_id, anio_publicacion, isbn } = payload;
+        const [rows] = await db.query(
+            'CALL sp_update_book(?, ?, ?, ?, ?)',
+            [id, titulo, autor_id, anio_publicacion ?? null, isbn ?? null]
+        );
+        const updated = firstResultSet(rows)[0];
+        return updated || null;
+    },
+
+    deleteBook: async (id) => {
+        await db.query('CALL sp_delete_book(?)', [id]);
+        return { message: `Libro con id ${id} eliminado` };
+    }
+};
+
+module.exports = Book;
 
 
-    

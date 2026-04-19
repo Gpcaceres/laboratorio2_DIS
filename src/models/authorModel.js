@@ -1,30 +1,35 @@
 const db = require('../config/db');
 
-const Autor= {
-    findAll: async()=>{
-        const [rows] = await db.query('SELECT * FROM autor');
-        return rows;
+const firstResultSet = (rows) => (Array.isArray(rows[0]) ? rows[0] : rows);
+
+const Autor = {
+    getAllAuthors: async () => {
+        const [rows] = await db.query('CALL sp_get_authors()');
+        return firstResultSet(rows);
     },
 
-    createAuthor: async (nombres, apellidos, fecha_nacimiento, nacionalidad, correo_electrónico) => {
-        const consulta = 'INSERT INTO autor (nombre, apellidos, fecha_nacimiento, nacionalidad, correo_electrónico) VALUES (?, ?, ?, ?, ?)';
-        const values = [nombres, apellidos, fecha_nacimiento, nacionalidad, correo_electrónico];
-    
-        const [result] = await db.query(consulta, values);
-        return{ id: result.insertId,nombres, apellidos, fecha_nacimiento, nacionalidad, correo_electrónico };
+    createAuthor: async (payload) => {
+        const { nombres, apellidos, fecha_nacimiento, nacionalidad, correo_electronico } = payload;
+        const [rows] = await db.query(
+            'CALL sp_create_author(?, ?, ?, ?, ?)',
+            [nombres, apellidos, fecha_nacimiento, nacionalidad, correo_electronico]
+        );
+        const created = firstResultSet(rows)[0];
+        return created || null;
     },
 
-    updateAuthor: async (id, nombres, apellidos, fecha_nacimiento, nacionalidad, correo_electrónico) => {
-        const consulta = 'UPDATE autor SET nombre = ?, apellidos = ?, fecha_nacimiento = ?, nacionalidad = ?, correo_electrónico = ? WHERE id = ?';
-        const values = [nombres, apellidos, fecha_nacimiento, nacionalidad, correo_electrónico, id];
-    
-        await db.query(consulta, values);// Ejecutar la consulta de actualización
-        return { id, nombres, apellidos, fecha_nacimiento, nacionalidad, correo_electrónico };
+    updateAuthor: async (id, payload) => {
+        const { nombres, apellidos, fecha_nacimiento, nacionalidad, correo_electronico } = payload;
+        const [rows] = await db.query(
+            'CALL sp_update_author(?, ?, ?, ?, ?, ?)',
+            [id, nombres, apellidos, fecha_nacimiento, nacionalidad, correo_electronico]
+        );
+        const updated = firstResultSet(rows)[0];
+        return updated || null;
     },
 
     deleteAuthor: async (id) => {
-        const consulta = 'DELETE FROM autor WHERE id = ?';
-        await db.query(consulta, [id]);
+        await db.query('CALL sp_delete_author(?)', [id]);
         return { message: `Autor con id ${id} eliminado` };
     }
 }
