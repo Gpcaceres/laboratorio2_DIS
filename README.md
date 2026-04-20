@@ -48,3 +48,6 @@ GET /api/authors
 GET /api/authors/search?name=ge
 GET /api/books
 ```
+
+## Comando para entrar a mysql
+docker exec -it laboratorio2_mysql mysql -u admin -padmin1234
